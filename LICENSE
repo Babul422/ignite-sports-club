@@ -1,0 +1,39 @@
+MIT License
+
+Copyright (c) 2026 IGNITE Sports Club Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+### Brand Trademark & Media Asset Notice
+
+1. **Source Code & Software**:
+   The MIT License above applies strictly to the source code, components, styles, utility logic, and software scripts within this repository.
+
+2. **Brand Identity & Trademark Reservation**:
+   The official club emblem, trademarks, name "IGNITE SPORTS CLUB", and associated brand iconography (`public/ignite-logo.jpg` and `src/assets/ignite-logo.jpg`) remain the intellectual property of IGNITE Sports Club — EST. 2026. They are reserved and are not licensed for unauthorized commercial re-use, endorsement, or external club branding without prior written authorization.
+
+3. **Third-Party Footage & Asset Licenses**:
+   This MIT license does not grant rights to third-party footage, fonts, or assets beyond their respective licenses:
+   - **Football Footage** (`public/videos/football-goal.mp4`): Mixkit Item #43495, licensed under the Mixkit Free License.
+   - **Basketball Footage** (`public/videos/basketball-shot.mp4`): Mixkit Item #44448, licensed under the Mixkit Free License.
+   - **Badminton Footage** (`public/videos/badminton-smash.mp4`): Mixkit Item #13038, licensed under the Mixkit Free License.
+   - **Cricket Footage** (`public/videos/cricket-hit.webm`): Wikimedia Commons (`Aythorpe Roding CC v Terling CC, Video 2 batsman hits cover drives.webm`), licensed under Creative Commons Attribution (CC-BY).
+   - **Web Fonts** (Chakra Petch, Outfit, Syne): Distributed via Google Fonts under the SIL Open Font License (OFL v1.1).

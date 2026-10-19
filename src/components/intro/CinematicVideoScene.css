@@ -1,0 +1,232 @@
+/* Cinematic Real Sports Video Stage */
+.cinematic-video-stage {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #080B18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+/* Video Player with Slow Cinematic Pan & Zoom */
+.cinematic-sport-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: contrast(1.12) saturate(1.15) brightness(0.92);
+  transform: scale(1.02);
+  animation: cinematicSlowZoom 4s ease-out forwards;
+}
+
+@keyframes cinematicSlowZoom {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.08); }
+}
+
+/* Cinematic Color Grade: Electric Blue & Cosmic Purple Tone */
+.cinematic-color-grade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(40, 123, 255, 0.18) 0%,
+    rgba(16, 27, 61, 0.1) 40%,
+    rgba(139, 92, 246, 0.2) 100%
+  );
+  mix-blend-mode: color;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Edge Vignette & Letterbox Depth */
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    rgba(8, 11, 24, 0.72) 80%,
+    #080B18 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Subtle Film Streak Lines */
+.cinematic-speed-lines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 4;
+}
+
+/* Sports Broadcast HUD Telemetry */
+.sports-broadcast-hud {
+  position: absolute;
+  bottom: 40px;
+  left: 48px;
+  right: 48px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-scene-counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: #62C7FF;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  text-shadow: 0 0 12px rgba(40, 123, 255, 0.8);
+}
+
+.counter-num {
+  font-size: 22px;
+  color: #FFFFFF;
+}
+
+.counter-divider {
+  opacity: 0.5;
+  color: #8B5CF6;
+}
+
+.counter-total {
+  opacity: 0.75;
+}
+
+.hud-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 27, 61, 0.75);
+  border: 1px solid rgba(40, 123, 255, 0.4);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #62C7FF;
+  width: fit-content;
+  backdrop-filter: blur(8px);
+}
+
+.badge-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #287BFF;
+  box-shadow: 0 0 8px #287BFF;
+  animation: pulseDot 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.hud-sport-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin: 4px 0 2px 0;
+  text-shadow: 0 0 25px rgba(40, 123, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.85);
+}
+
+.hud-sport-tagline {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #B7C0D8;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Scrub Progress Bar */
+.hud-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.hud-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #287BFF, #8B5CF6, #62C7FF);
+  border-radius: 999px;
+  box-shadow: 0 0 8px #62C7FF;
+  transition: width 0.08s linear;
+}
+
+/* Fallback Card */
+.video-fallback-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #080B18;
+}
+
+.fallback-pulse {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #287BFF;
+  animation: pulseFallback 2s infinite;
+}
+
+@keyframes pulseFallback {
+  0% { transform: scale(0.8); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(0.8); opacity: 0.3; }
+}
+
+.fallback-text {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #FFFFFF;
+}
+
+@media (max-width: 640px) {
+  .sports-broadcast-hud {
+    bottom: 24px;
+    left: 20px;
+    right: 20px;
+  }
+  .hud-sport-title {
+    font-size: 1.6rem;
+  }
+}

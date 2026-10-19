@@ -1,0 +1,174 @@
+/* Scene 6: Cosmic Blue-Purple Fire Transition & Official Logo Reveal */
+.fire-transition-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(16, 27, 61, 0.4) 0%, rgba(8, 11, 24, 0.95) 100%);
+  animation: fireFadeIn 0.6s ease-out forwards;
+}
+
+.fire-transition-overlay.logo-active {
+  pointer-events: auto;
+}
+
+@keyframes fireFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fire-vortex-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Logo Reveal Container */
+.fire-logo-reveal-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 10;
+  opacity: 0;
+  transform: scale(0.85) translateY(20px);
+  transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 800px;
+  padding: 24px;
+}
+
+.fire-logo-reveal-container.revealed {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Radiant Cosmic Flame Aura */
+.fire-logo-glow-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(98, 199, 255, 0.35) 0%, rgba(40, 123, 255, 0.25) 40%, rgba(139, 92, 246, 0.15) 70%, transparent 100%);
+  filter: blur(35px);
+  pointer-events: none;
+  animation: auraPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes auraPulse {
+  0% { transform: translate(-50%, -55%) scale(0.92); opacity: 0.7; }
+  100% { transform: translate(-50%, -55%) scale(1.08); opacity: 1; }
+}
+
+.fire-logo-artwork-wrap {
+  width: 195px;
+  max-width: 75vw;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.fire-official-logo-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow:
+    0 0 35px rgba(40, 123, 255, 0.8),
+    0 0 70px rgba(139, 92, 246, 0.5);
+  animation: logoFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes logoFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+.fire-brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.fire-brand-ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 27, 61, 0.8);
+  border: 1px solid rgba(40, 123, 255, 0.4);
+  padding: 4px 16px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #62C7FF;
+  margin-bottom: 12px;
+}
+
+.ticker-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #287BFF;
+  box-shadow: 0 0 8px #287BFF;
+}
+
+.fire-brand-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  text-shadow: 0 0 25px rgba(40, 123, 255, 0.8), 0 0 50px rgba(139, 92, 246, 0.5);
+}
+
+.fire-brand-tagline {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #B7C0D8;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.fire-action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .fire-logo-artwork-wrap {
+    width: 150px;
+  }
+  .fire-brand-title {
+    font-size: 1.6rem;
+  }
+  .fire-brand-tagline {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+  .fire-action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .fire-action-buttons .sports-cut-button {
+    width: 100%;
+  }
+}
