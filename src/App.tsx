@@ -16,6 +16,7 @@ import {
   Dumbbell,
   Target,
 } from 'lucide-react';
+import { downloadIcs } from './utils/calendarExport';
 import './App.css';
 
 interface SportCategory {
@@ -96,6 +97,7 @@ export const App: React.FC = () => {
   const [isTransitioningIntoArena, setIsTransitioningIntoArena] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('arena');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scheduleFilter, setScheduleFilter] = useState<'all' | 'mwf' | 'tts'>('all');
 
   // Registration Form State
   const [formData, setFormData] = useState({
@@ -544,6 +546,34 @@ export const App: React.FC = () => {
               </p>
             </div>
 
+            {/* Schedule Day Filter Controls */}
+            <div className="schedule-filter-bar" role="toolbar" aria-label="Schedule Day Filters">
+              <button
+                type="button"
+                className={`schedule-filter-btn ${scheduleFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setScheduleFilter('all')}
+                aria-pressed={scheduleFilter === 'all'}
+              >
+                All Schedules
+              </button>
+              <button
+                type="button"
+                className={`schedule-filter-btn ${scheduleFilter === 'mwf' ? 'active' : ''}`}
+                onClick={() => setScheduleFilter('mwf')}
+                aria-pressed={scheduleFilter === 'mwf'}
+              >
+                Mon/Wed/Fri
+              </button>
+              <button
+                type="button"
+                className={`schedule-filter-btn ${scheduleFilter === 'tts' ? 'active' : ''}`}
+                onClick={() => setScheduleFilter('tts')}
+                aria-pressed={scheduleFilter === 'tts'}
+              >
+                Tue/Thu/Sat
+              </button>
+            </div>
+
             <div className="schedule-table-wrap">
               <table className="schedule-table">
                 <thead>
@@ -556,7 +586,17 @@ export const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {SPORTS_DATA.map((sport) => (
+                  {SPORTS_DATA.filter((sport) => {
+                    if (scheduleFilter === 'all') return true;
+                    const days = sport.schedule.split('•')[0] || '';
+                    if (scheduleFilter === 'mwf') {
+                      return days.includes('Mon') || days.includes('Wed') || days.includes('Fri');
+                    }
+                    if (scheduleFilter === 'tts') {
+                      return days.includes('Tue') || days.includes('Thu') || days.includes('Sat');
+                    }
+                    return true;
+                  }).map((sport) => (
                     <tr key={sport.id}>
                       <td className="sport-col">
                         <strong>{sport.name}</strong>
@@ -565,13 +605,25 @@ export const App: React.FC = () => {
                       <td>{sport.schedule.split('•')[1] || '17:00 - 19:30'}</td>
                       <td>{sport.facility.split('(')[0]}</td>
                       <td>
-                        <button
-                          type="button"
-                          className="table-join-btn"
-                          onClick={() => handleOpenJoinModal(sport.id)}
-                        >
-                          JOIN TRYOUT
-                        </button>
+                        <div className="schedule-actions">
+                          <button
+                            type="button"
+                            className="table-join-btn"
+                            onClick={() => handleOpenJoinModal(sport.id)}
+                          >
+                            JOIN TRYOUT
+                          </button>
+                          <button
+                            type="button"
+                            className="table-calendar-btn"
+                            title={`Download .ics calendar file for ${sport.name}`}
+                            aria-label={`Add ${sport.name} training schedule to calendar (.ics)`}
+                            onClick={() => downloadIcs(sport)}
+                          >
+                            <Calendar size={13} className="btn-icon" />
+                            <span>Add to Calendar (.ics)</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

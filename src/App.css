@@ -701,6 +701,77 @@
   letter-spacing: 0.08em;
 }
 
+/* Schedule Filters */
+.schedule-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.schedule-filter-btn {
+  background: rgba(16, 27, 61, 0.6);
+  border: 1px solid rgba(40, 123, 255, 0.3);
+  color: var(--text-secondary);
+  font-family: var(--font-athletic);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.schedule-filter-btn:hover {
+  border-color: rgba(40, 123, 255, 0.7);
+  color: #ffffff;
+  background: rgba(40, 123, 255, 0.15);
+}
+
+.schedule-filter-btn.active {
+  background: var(--color-primary-blue);
+  border-color: var(--color-primary-blue);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(40, 123, 255, 0.5);
+}
+
+.schedule-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.table-calendar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+  font-family: var(--font-athletic);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+.table-calendar-btn:hover {
+  background: rgba(40, 123, 255, 0.18);
+  border-color: rgba(40, 123, 255, 0.55);
+  color: var(--color-ice-blue);
+  box-shadow: 0 0 12px rgba(40, 123, 255, 0.3);
+}
+
+.table-calendar-btn .btn-icon {
+  color: var(--color-ice-blue);
+}
+
 .table-join-btn {
   background: transparent;
   border: 1px solid rgba(40, 123, 255, 0.45);
