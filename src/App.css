@@ -240,20 +240,21 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  isolation: isolate;
-  overflow: hidden;
   border-radius: 24px;
+  z-index: 1;
 }
 
-/* Ambient Hero Dragon Emblem Background */
-.hero-emblem-backdrop {
-  position: absolute;
+/* Ambient Fixed Full-Size Rotating Dragon Emblem Background */
+.fixed-arena-emblem-backdrop {
+  position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
   overflow: hidden;
   user-select: none;
 }
@@ -293,17 +294,17 @@
   border-width: 0 2px 2px 0;
 }
 
-/* Tactical Reticle Ring framing the emblem */
+/* Tactical Reticle Ring framing the fixed full-size emblem */
 .hero-reticle-ring {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(340px, 52vw, 620px);
-  height: clamp(340px, 52vw, 620px);
+  width: min(92vmin, 920px);
+  height: min(92vmin, 920px);
   transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 1px dashed rgba(0, 229, 255, 0.16);
-  box-shadow: inset 0 0 30px rgba(40, 123, 255, 0.08);
+  box-shadow: inset 0 0 45px rgba(40, 123, 255, 0.08);
   opacity: 0.65;
   pointer-events: none;
 }
@@ -312,49 +313,49 @@
 .reticle-tick {
   position: absolute;
   background: #00e5a3;
-  box-shadow: 0 0 8px rgba(0, 229, 163, 0.85);
-  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 229, 163, 0.9);
+  border-radius: 4px;
 }
 
 .tick-top {
-  top: -3px;
+  top: -4px;
   left: 50%;
-  width: 14px;
-  height: 3px;
+  width: 18px;
+  height: 4px;
   transform: translateX(-50%);
 }
 
 .tick-bottom {
-  bottom: -3px;
+  bottom: -4px;
   left: 50%;
-  width: 14px;
-  height: 3px;
+  width: 18px;
+  height: 4px;
   transform: translateX(-50%);
 }
 
 .tick-left {
-  left: -3px;
+  left: -4px;
   top: 50%;
-  width: 3px;
-  height: 14px;
+  width: 4px;
+  height: 18px;
   transform: translateY(-50%);
 }
 
 .tick-right {
-  right: -3px;
+  right: -4px;
   top: 50%;
-  width: 3px;
-  height: 14px;
+  width: 4px;
+  height: 18px;
   transform: translateY(-50%);
 }
 
-/* Rotating Dragon Emblem Container - Smooth Clockwise Infinite Rotation */
+/* Rotating Dragon Emblem Container - Fixed Full-Size Clockwise Infinite Rotation */
 .hero-emblem-spinner {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(290px, 46vw, 540px);
-  height: clamp(290px, 46vw, 540px);
+  width: min(84vmin, 840px);
+  height: min(84vmin, 840px);
   transform: translate(-50%, -50%);
   animation: rotateEmblemClockwise 50s linear infinite;
   will-change: transform;
@@ -373,14 +374,14 @@
   }
 }
 
-/* Dragon Emblem Image - Low opacity (5-10%) for readability */
+/* Dragon Emblem Image - Full size, subtle opacity for readability across page */
 .hero-emblem-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   border-radius: 50%;
   opacity: 0.08;
-  filter: drop-shadow(0 0 50px rgba(40, 123, 255, 0.4));
+  filter: drop-shadow(0 0 60px rgba(40, 123, 255, 0.45));
   user-select: none;
   pointer-events: none;
 }
@@ -391,11 +392,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(280px, 44vw, 500px);
-  height: clamp(280px, 44vw, 500px);
-  background: radial-gradient(circle, rgba(40, 123, 255, 0.18) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
+  width: min(80vmin, 800px);
+  height: min(80vmin, 800px);
+  background: radial-gradient(circle, rgba(40, 123, 255, 0.2) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
   border-radius: 50%;
-  filter: blur(28px);
+  filter: blur(36px);
   pointer-events: none;
 }
 
@@ -507,6 +508,8 @@
 
 /* Disciplines Section */
 .arena-disciplines-section {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1280px;
   margin: 40px auto 70px;
@@ -745,6 +748,8 @@
 
 /* Facilities Section */
 .arena-facilities-section {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1280px;
   margin: 30px auto 70px;
@@ -819,6 +824,8 @@
 
 /* Schedule Section */
 .arena-schedule-section {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1280px;
   margin: 30px auto 80px;
@@ -961,6 +968,8 @@
 
 /* Footer */
 .arena-footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid rgba(40, 123, 255, 0.18);
   padding: 34px 24px;
   margin-top: auto;
