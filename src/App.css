@@ -231,14 +231,181 @@
 
 /* Hero Section */
 .arena-hero-section {
+  position: relative;
   width: 100%;
   max-width: 1200px;
-  margin: 64px auto 32px;
-  padding: 0 24px;
+  margin: 56px auto 36px;
+  padding: 56px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Ambient Hero Dragon Emblem Background */
+.hero-emblem-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Tactical Corner Brackets (HUD Telemetry) */
+.hero-corner-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(0, 229, 255, 0.35);
+  border-style: solid;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hero-corner-bracket.top-left {
+  top: 12px;
+  left: 16px;
+  border-width: 2px 0 0 2px;
+}
+
+.hero-corner-bracket.top-right {
+  top: 12px;
+  right: 16px;
+  border-width: 2px 2px 0 0;
+}
+
+.hero-corner-bracket.bottom-left {
+  bottom: 12px;
+  left: 16px;
+  border-width: 0 0 2px 2px;
+}
+
+.hero-corner-bracket.bottom-right {
+  bottom: 12px;
+  right: 16px;
+  border-width: 0 2px 2px 0;
+}
+
+/* Tactical Reticle Ring framing the emblem */
+.hero-reticle-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(340px, 52vw, 620px);
+  height: clamp(340px, 52vw, 620px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 229, 255, 0.16);
+  box-shadow: inset 0 0 30px rgba(40, 123, 255, 0.08);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Directional Cardinal Ticks (12, 3, 6, 9 o clock) */
+.reticle-tick {
+  position: absolute;
+  background: #00e5a3;
+  box-shadow: 0 0 8px rgba(0, 229, 163, 0.85);
+  border-radius: 3px;
+}
+
+.tick-top {
+  top: -3px;
+  left: 50%;
+  width: 14px;
+  height: 3px;
+  transform: translateX(-50%);
+}
+
+.tick-bottom {
+  bottom: -3px;
+  left: 50%;
+  width: 14px;
+  height: 3px;
+  transform: translateX(-50%);
+}
+
+.tick-left {
+  left: -3px;
+  top: 50%;
+  width: 3px;
+  height: 14px;
+  transform: translateY(-50%);
+}
+
+.tick-right {
+  right: -3px;
+  top: 50%;
+  width: 3px;
+  height: 14px;
+  transform: translateY(-50%);
+}
+
+/* Rotating Dragon Emblem Container - Smooth Clockwise Infinite Rotation */
+.hero-emblem-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(290px, 46vw, 540px);
+  height: clamp(290px, 46vw, 540px);
+  transform: translate(-50%, -50%);
+  animation: rotateEmblemClockwise 50s linear infinite;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+@keyframes rotateEmblemClockwise {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Dragon Emblem Image - Low opacity (5-10%) for readability */
+.hero-emblem-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  opacity: 0.08;
+  filter: drop-shadow(0 0 50px rgba(40, 123, 255, 0.4));
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Ambient Radial Electric Glow */
+.hero-emblem-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(280px, 44vw, 500px);
+  height: clamp(280px, 44vw, 500px);
+  background: radial-gradient(circle, rgba(40, 123, 255, 0.18) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+/* Foreground Hero Content */
+.hero-status-pill,
+.arena-hero-headline,
+.arena-hero-subhead,
+.hero-cta-group {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-status-pill {
@@ -1001,3 +1168,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Accessibility: Disable continuous spin when reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .hero-emblem-spinner {
+    animation: none !important;
+  }
+}
+

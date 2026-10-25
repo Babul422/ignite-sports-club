@@ -348,6 +348,39 @@ export const App: React.FC = () => {
 
           {/* Hero Section */}
           <section id="arena" className="arena-hero-section">
+            {/* Ambient Hero Dragon Emblem Background */}
+            <div className="hero-emblem-backdrop" aria-hidden="true">
+              {/* Tactical Arena Corner Brackets */}
+              <span className="hero-corner-bracket top-left" />
+              <span className="hero-corner-bracket top-right" />
+              <span className="hero-corner-bracket bottom-left" />
+              <span className="hero-corner-bracket bottom-right" />
+
+              {/* Tactical Reticle Ring with Cardinal Direction Ticks */}
+              <div className="hero-reticle-ring">
+                <span className="reticle-tick tick-top" />
+                <span className="reticle-tick tick-right" />
+                <span className="reticle-tick tick-bottom" />
+                <span className="reticle-tick tick-left" />
+              </div>
+
+              {/* Smooth Clockwise Rotating Dragon Emblem */}
+              <div className="hero-emblem-spinner">
+                <img
+                  src="/ignite-dragon-emblem.png"
+                  alt=""
+                  className="hero-emblem-img"
+                  loading="eager"
+                  decoding="async"
+                  width="560"
+                  height="560"
+                />
+              </div>
+
+              {/* Ambient Radial Electric Glow */}
+              <div className="hero-emblem-glow" />
+            </div>
+
             <div className="hero-status-pill">
               <span className="live-pulsar" />
               SEASON 2026 TRYOUTS & CHAMPIONSHIPS ACTIVE
