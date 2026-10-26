@@ -573,6 +573,216 @@ class SportsAudioSynthesizer {
     }
   }
 
+  // --- SCENE 1: DARK ENERGY ATMOSPHERIC HUM ---
+  public playDarkEnergyHum() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(55, now);
+      osc.frequency.exponentialRampToValueAtTime(73.4, now + 1.8);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(140, now);
+      filter.frequency.exponentialRampToValueAtTime(320, now + 1.8);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.22, now + 0.8);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.4);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 2.5);
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // --- SCENE 2: CINEMATIC DEEP BASS IMPACT ---
+  public playDeepBassImpact() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime;
+
+      // Heavy 38Hz sub-bass punch
+      const sub = this.ctx.createOscillator();
+      const subGain = this.ctx.createGain();
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(125, now);
+      sub.frequency.exponentialRampToValueAtTime(38, now + 0.65);
+
+      subGain.gain.setValueAtTime(0.85, now);
+      subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+
+      sub.connect(subGain);
+      subGain.connect(this.masterGain);
+
+      sub.start(now);
+      sub.stop(now + 1.5);
+
+      // Warm punch transient
+      const punch = this.ctx.createOscillator();
+      const punchGain = this.ctx.createGain();
+      punch.type = 'triangle';
+      punch.frequency.setValueAtTime(180, now);
+      punch.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+
+      punchGain.gain.setValueAtTime(0.45, now);
+      punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+      punch.connect(punchGain);
+      punchGain.connect(this.masterGain);
+
+      punch.start(now);
+      punch.stop(now + 0.16);
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // --- SCENE 3: ENERGY IGNITION VORTEX RISE ---
+  public playEnergyIgnition() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(75, now);
+      osc.frequency.exponentialRampToValueAtTime(640, now + 1.6);
+
+      filter.type = 'bandpass';
+      filter.Q.setValueAtTime(4.5, now);
+      filter.frequency.setValueAtTime(180, now);
+      filter.frequency.exponentialRampToValueAtTime(3200, now + 1.6);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.38, now + 1.0);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 1.9);
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // --- SCENE 4: FUTURISTIC TUNNEL AERODYNAMIC WHOOSH ---
+  public playTunnelWhoosh() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime;
+      const bufferSize = Math.floor(this.ctx.sampleRate * 1.8);
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.Q.setValueAtTime(3.5, now);
+      filter.frequency.setValueAtTime(180, now);
+      filter.frequency.exponentialRampToValueAtTime(1200, now + 0.9);
+      filter.frequency.exponentialRampToValueAtTime(220, now + 1.8);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.8);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+
+      noise.start(now);
+      noise.stop(now + 1.85);
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // --- SCENE 6: SPORTS MONTAGE ELECTRONIC IMPACT DROP ---
+  public playMontageBeat() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime;
+
+      // Heavy Kick Drop
+      const kick = this.ctx.createOscillator();
+      const kickGain = this.ctx.createGain();
+      kick.type = 'sine';
+      kick.frequency.setValueAtTime(150, now);
+      kick.frequency.exponentialRampToValueAtTime(42, now + 0.25);
+      kickGain.gain.setValueAtTime(0.9, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+      kick.connect(kickGain);
+      kickGain.connect(this.masterGain);
+      kick.start(now);
+      kick.stop(now + 0.55);
+
+      // Electronic Brass Synth Stab (D minor 9: D4, F4, A4, C5)
+      const chord = [293.66, 349.23, 440.0, 523.25];
+      chord.forEach((freq) => {
+        if (!this.ctx || !this.masterGain) return;
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(3200, now);
+        filter.frequency.exponentialRampToValueAtTime(800, now + 0.35);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.start(now);
+        osc.stop(now + 0.42);
+      });
+    } catch {
+      // Audio fallback
+    }
+  }
+
   // Massive low-frequency impact and harmonic logo reveal chord
   public playLogoRevealImpact() {
     if (this.isMuted) return;

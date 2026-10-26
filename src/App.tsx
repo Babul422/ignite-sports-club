@@ -17,6 +17,7 @@ import {
   Target,
 } from 'lucide-react';
 import { downloadIcs } from './utils/calendarExport';
+import igniteDragonLogo from './assets/ignite-dragon-emblem.png';
 import './App.css';
 
 interface SportCategory {
@@ -203,7 +204,7 @@ export const App: React.FC = () => {
             onEnterArena={handleEnterArena}
             onSkip={handleSkipIntro}
             clubName="IGNITE SPORTS CLUB"
-            tagline="MORE THAN A GAME. WE ARE A TEAM."
+            tagline="PLAY. COMPETE. GROW. TOGETHER."
           />
         </div>
       ) : (
@@ -243,9 +244,11 @@ export const App: React.FC = () => {
             <div className="arena-brand" onClick={() => scrollToSection('arena')} role="button" tabIndex={0}>
               <div className="brand-crest-icon">
                 <img
-                  src="/ignite-logo.jpg"
-                  alt="IGNITE SPORTS CLUB — EST. 2026 Logo"
+                  src={igniteDragonLogo}
+                  alt="IGNITE SPORTS CLUB Logo"
                   className="brand-crest-logo-img"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
               <div className="brand-title-wrap">
@@ -381,16 +384,16 @@ export const App: React.FC = () => {
 
             <div className="hero-status-pill">
               <span className="live-pulsar" />
-              SEASON 2026 TRYOUTS & CHAMPIONSHIPS ACTIVE
+              IGNITE SPORTS CLUB • EST. 2026
             </div>
 
             <h1 className="arena-hero-headline">
-              DOMINATE THE FIELD.<br />
-              <span className="electric-gradient-text">FORGE THE LEGACY.</span>
+              MORE THAN<br />
+              <span className="electric-gradient-text">A GAME</span>
             </h1>
 
             <p className="arena-hero-subhead">
-              The premier athletic club uniting football, cricket, basketball, and badminton under one unstoppable banner.
+              PLAY. COMPETE. GROW. TOGETHER.
             </p>
 
             <div className="hero-cta-group">
@@ -399,16 +402,15 @@ export const App: React.FC = () => {
                 className="sports-cut-button primary"
                 onClick={() => scrollToSection('disciplines')}
               >
-                <span>EXPLORE TEAMS</span>
+                <span>EXPLORE EVENTS</span>
                 <ArrowRight size={18} />
               </button>
               <button
                 type="button"
                 className="sports-cut-button secondary"
-                onClick={handleReplayIntro}
+                onClick={() => handleOpenJoinModal()}
               >
-                <Play size={16} />
-                <span>EXPERIENCE 3D INTRO</span>
+                <span>JOIN US</span>
               </button>
             </div>
           </section>
@@ -669,9 +671,11 @@ export const App: React.FC = () => {
               <div className="footer-brand">
                 <div className="brand-crest-icon">
                   <img
-                    src="/ignite-logo.jpg"
+                    src={igniteDragonLogo}
                     alt="IGNITE SPORTS CLUB Logo"
                     className="brand-crest-logo-img"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="footer-brand-text">

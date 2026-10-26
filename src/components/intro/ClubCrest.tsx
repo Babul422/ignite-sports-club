@@ -14,7 +14,7 @@ interface ClubCrestProps {
 export const ClubCrest: React.FC<ClubCrestProps> = ({
   visible,
   clubName = 'IGNITE SPORTS CLUB',
-  tagline = 'MORE THAN A GAME. WE ARE A TEAM.',
+  tagline = 'PLAY. COMPETE. GROW. TOGETHER.',
   onEnterArena,
   onSkipIntro,
   isAudioMuted,

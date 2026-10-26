@@ -1,0 +1,379 @@
+.original-logo-reveal-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.original-logo-reveal-stage.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Background Atmosphere */
+.logo-reveal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(16, 27, 61, 0.72) 0%, rgba(8, 11, 24, 0.94) 80%);
+  pointer-events: none;
+}
+
+/* Particle Burst Canvas behind the logo */
+.logo-particle-burst-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Central Content Container */
+.logo-reveal-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  width: 90%;
+  padding: 24px;
+}
+
+/* 1. Surrounding Glow Aura behind Logo */
+.logo-artwork-anchor {
+  position: relative;
+  width: 240px;
+  max-width: 68vw;
+  aspect-ratio: 1021 / 1024;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease;
+}
+
+.original-logo-reveal-stage.is-revealed .logo-artwork-anchor {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Multi-layered Surrounding Glowing Auras (Tasteful Glow) */
+.logo-glow-aura-outer {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(40, 123, 255, 0.45) 0%, rgba(139, 92, 246, 0.28) 45%, transparent 72%);
+  filter: blur(28px);
+  pointer-events: none;
+  animation: auraBreathe 4s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+.logo-glow-aura-inner {
+  position: absolute;
+  inset: -12%;
+  border-radius: 24px;
+  background: radial-gradient(circle, rgba(98, 199, 255, 0.6) 0%, rgba(40, 123, 255, 0.35) 60%, transparent 80%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 2;
+  animation: corePulse 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes auraBreathe {
+  0% { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.08); opacity: 0.95; }
+}
+
+@keyframes corePulse {
+  0% { transform: scale(0.96); opacity: 0.7; }
+  100% { transform: scale(1.04); opacity: 1; }
+}
+
+/* 2. Emblem Container with Light Sweep Mask */
+.logo-emblem-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  z-index: 3;
+  box-shadow: 
+    0 0 40px rgba(40, 123, 255, 0.5),
+    0 0 70px rgba(139, 92, 246, 0.35),
+    0 16px 32px rgba(0, 0, 0, 0.75);
+}
+
+/* THE EXACT ORIGINAL LOGO ASSET — UNMODIFIED */
+.ignite-official-original-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+/* 3. Light Sweep Effect (Gleam across the logo container) */
+.logo-light-sweep {
+  position: absolute;
+  top: -60%;
+  left: -80%;
+  width: 250%;
+  height: 220%;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.0) 42%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(98, 199, 255, 0.3) 54%,
+    transparent 62%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+}
+
+.original-logo-reveal-stage.is-revealed .logo-light-sweep {
+  animation: lightSweepPass 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+}
+
+@keyframes lightSweepPass {
+  0% {
+    transform: translate(-60%, -60%) rotate(25deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(60%, 60%) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+/* Brand Typography */
+.logo-brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease 0.4s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+}
+
+.original-logo-reveal-stage.is-revealed .logo-brand-block {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.logo-badge-ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(40, 123, 255, 0.14);
+  border: 1px solid rgba(40, 123, 255, 0.35);
+  border-radius: 9999px;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #62C7FF;
+  text-transform: uppercase;
+}
+
+.ticker-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #287BFF;
+  box-shadow: 0 0 8px #287BFF;
+  animation: dotPulse 1.8s infinite alternate;
+}
+
+@keyframes dotPulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 1; }
+}
+
+.logo-club-title {
+  margin: 0;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px rgba(40, 123, 255, 0.6);
+}
+
+.logo-club-tagline {
+  margin: 0;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #62C7FF;
+  text-transform: uppercase;
+}
+
+/* Action Controls (Enter the Arena) */
+.logo-reveal-actions {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s ease 0.6s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+}
+
+.original-logo-reveal-stage.is-revealed .logo-reveal-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.arena-enter-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 34px;
+  background: linear-gradient(135deg, #287BFF 0%, #1752c4 100%);
+  border: 1px solid rgba(98, 199, 255, 0.6);
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 
+    0 0 24px rgba(40, 123, 255, 0.6),
+    0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.arena-enter-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(135deg, #3d8eff 0%, #1e5dd8 100%);
+  box-shadow: 
+    0 0 36px rgba(40, 123, 255, 0.85),
+    0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.arena-enter-cta:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.arena-skip-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  background: rgba(16, 27, 61, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arena-skip-cta:hover {
+  background: rgba(40, 123, 255, 0.18);
+  border-color: rgba(40, 123, 255, 0.4);
+  color: #FFFFFF;
+}
+
+/* Sound Indicator Pill */
+.logo-sound-row {
+  margin-top: 18px;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.8s;
+}
+
+.original-logo-reveal-stage.is-revealed .logo-sound-row {
+  opacity: 1;
+}
+
+.audio-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(8, 11, 24, 0.7);
+  border: 1px solid rgba(40, 123, 255, 0.25);
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.audio-toggle-pill:hover {
+  background: rgba(40, 123, 255, 0.15);
+  color: #FFFFFF;
+}
+
+.audio-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+}
+
+.audio-muted-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .logo-artwork-anchor {
+    width: 190px;
+    margin-bottom: 18px;
+  }
+  .logo-reveal-actions {
+    margin-top: 20px;
+    gap: 10px;
+  }
+  .arena-enter-cta {
+    padding: 12px 24px;
+    font-size: 0.85rem;
+  }
+  .arena-skip-cta {
+    padding: 12px 18px;
+    font-size: 0.78rem;
+  }
+}

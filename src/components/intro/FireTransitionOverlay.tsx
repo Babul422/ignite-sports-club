@@ -129,7 +129,7 @@ export const FireTransitionOverlay: React.FC<FireTransitionOverlayProps> = ({
             OFFICIAL ATHLETIC CLUB • EST. 2026
           </div>
           <h1 className="fire-brand-title">IGNITE SPORTS CLUB</h1>
-          <p className="fire-brand-tagline">MORE THAN A GAME. WE ARE A TEAM.</p>
+          <p className="fire-brand-tagline">PLAY. COMPETE. GROW. TOGETHER.</p>
         </div>
 
         {/* Enter Arena & Skip CTAs */}

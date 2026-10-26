@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import gsap from 'gsap';
-import { CinematicVideoScene, type SportsVideoSceneType } from './CinematicVideoScene';
 import { TapToEnter } from './TapToEnter';
-import { FireTransitionOverlay } from './FireTransitionOverlay';
 import { IntroControls } from './IntroControls';
 import { sportsAudio } from '../../utils/soundSynthesizer';
 import './SportsIntro.css';
 
-export type IntroSceneType = 'tap' | SportsVideoSceneType | 'fire-transition' | 'crest';
+export type StoryboardSceneType = 'tap' | 'video';
 
 interface SportsIntroProps {
   onEnterArena: () => void;
@@ -16,79 +13,142 @@ interface SportsIntroProps {
   tagline?: string;
 }
 
-function getInitialReducedMotion(): boolean {
-  if (typeof window !== 'undefined') {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }
-  return false;
-}
-
 export const SportsIntro: React.FC<SportsIntroProps> = ({
   onEnterArena,
   onSkip,
 }) => {
-  const [reducedMotion, setReducedMotion] = useState<boolean>(getInitialReducedMotion);
-  const [currentScene, setCurrentScene] = useState<IntroSceneType>('tap');
-  const [sceneProgress, setSceneProgress] = useState<number>(0);
-  const [isMuted, setIsMuted] = useState<boolean>(sportsAudio.isMuted);
-  const [logoRevealed, setLogoRevealed] = useState<boolean>(false);
+  const [currentScene, setCurrentScene] = useState<StoryboardSceneType>('tap');
+  const [isMuted, setIsMuted] = useState<boolean>(() => sportsAudio.isMuted);
   const [isEnteringArena, setIsEnteringArena] = useState<boolean>(false);
-  const [introFinished, setIntroFinished] = useState<boolean>(false);
+  const [videoError, setVideoError] = useState<boolean>(false);
 
-  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const [watermarkPos, setWatermarkPos] = useState<{
+    right: number;
+    bottom: number;
+    size: number;
+    visible: boolean;
+  }>({
+    right: 104,
+    bottom: 112,
+    size: 62,
+    visible: true,
+  });
 
-  // Sync reduced motion preference
-  useEffect(() => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hasStartedRef = useRef<boolean>(false);
+  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Dynamic layout calculation so the logo overlay precisely tracks the video watermark
+  const updateWatermarkLayout = useCallback(() => {
     if (typeof window === 'undefined') return;
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const listener = (e: MediaQueryListEvent) => {
-      setReducedMotion(e.matches);
-    };
-    mediaQuery.addEventListener('change', listener);
-    return () => mediaQuery.removeEventListener('change', listener);
+    const container = containerRef.current;
+    const cW = container ? container.clientWidth : window.innerWidth;
+    const cH = container ? container.clientHeight : window.innerHeight;
+    const vW = 1280;
+    const vH = 720;
+    const cRatio = cW / cH;
+    const vRatio = vW / vH;
+
+    let renderW: number;
+    let renderH: number;
+    let offsetX: number;
+    let offsetY: number;
+
+    if (cRatio > vRatio) {
+      // Screen is wider than 16:9
+      renderW = cW;
+      renderH = cW / vRatio;
+      offsetX = 0;
+      offsetY = (cH - renderH) / 2;
+    } else {
+      // Screen is narrower/taller than 16:9 (e.g. mobile portrait)
+      renderH = cH;
+      renderW = cH * vRatio;
+      offsetX = (cW - renderW) / 2;
+      offsetY = 0;
+    }
+
+    const scale = renderH / vH;
+    // Gemini sparkle center in 1280x720 video: X = 1160, Y = 600
+    const sparkleCenterX = offsetX + 1160 * scale;
+    const sparkleCenterY = offsetY + 600 * scale;
+
+    // Size of logo overlay (slightly larger than the 46.5px watermark to cleanly cover all points)
+    const logoSize = Math.max(34, Math.min(76, Math.round(58 * scale)));
+
+    // On narrow portrait screens, if video is cropped horizontally by object-fit: cover,
+    // verify if the watermark is still on screen
+    const isOffScreen =
+      sparkleCenterX > cW + logoSize / 2 ||
+      sparkleCenterX < -logoSize / 2 ||
+      sparkleCenterY > cH + logoSize / 2 ||
+      sparkleCenterY < -logoSize / 2;
+
+    const right = Math.round(cW - sparkleCenterX - logoSize / 2);
+    const bottom = Math.round(cH - sparkleCenterY - logoSize / 2);
+
+    setWatermarkPos({
+      right: Math.max(8, right),
+      bottom: Math.max(8, bottom),
+      size: logoSize,
+      visible: !isOffScreen && sparkleCenterX <= cW - 4,
+    });
   }, []);
+
+  useEffect(() => {
+    if (currentScene !== 'video') return;
+    updateWatermarkLayout();
+    window.addEventListener('resize', updateWatermarkLayout);
+    return () => window.removeEventListener('resize', updateWatermarkLayout);
+  }, [currentScene, updateWatermarkLayout]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       sportsAudio.stopAllAudio();
-      if (timelineRef.current) {
-        timelineRef.current.kill();
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
       }
     };
   }, []);
 
-  // Audio mute/unmute
+  // Audio mute/unmute toggle (synchronizes with video audio track)
   const handleToggleMute = useCallback(() => {
-    const muted = sportsAudio.toggleMute();
-    setIsMuted(muted);
-    if (!muted) {
-      sportsAudio.playButtonHover();
-    }
+    setIsMuted((prev) => {
+      const next = !prev;
+      sportsAudio.isMuted = next;
+      if (videoRef.current) {
+        videoRef.current.muted = next;
+      }
+      return next;
+    });
   }, []);
 
-  // Immediate Skip Intro (instant transition & stop audio)
+  // Immediate Skip Intro (instant transition & stop audio/video)
   const handleSkip = useCallback(() => {
-    if (timelineRef.current) {
-      timelineRef.current.kill();
+    if (fallbackTimerRef.current) {
+      clearTimeout(fallbackTimerRef.current);
     }
     sportsAudio.stopAllAudio();
-    sportsAudio.playButtonHover();
-    // Save skip preference for returning visitor option
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
     if (typeof window !== 'undefined') {
       localStorage.setItem('ignite_skip_intro_pref', 'true');
     }
     onSkip();
   }, [onSkip]);
 
-  // Cinematic Enter Arena warp dive transition
+  // Cinematic Enter Arena warp dive transition into homepage
   const handleEnterArena = useCallback(() => {
-    if (timelineRef.current) {
-      timelineRef.current.kill();
+    if (fallbackTimerRef.current) {
+      clearTimeout(fallbackTimerRef.current);
     }
     sportsAudio.stopAllAudio();
-    sportsAudio.playButtonHover();
-    sportsAudio.playWhoosh(1.8);
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
     setIsEnteringArena(true);
 
     // Warp flash transition into homepage
@@ -97,170 +157,144 @@ export const SportsIntro: React.FC<SportsIntroProps> = ({
     }, 550);
   }, [onEnterArena]);
 
-  // Orchestrate the full 6-Scene Cinematic Sports Journey
-  const startCinematicExperience = useCallback(() => {
-    // Start audio groove
-    sportsAudio.startFunkyGroove();
-
-    if (timelineRef.current) {
-      timelineRef.current.kill();
-    }
-
-    const master = gsap.timeline({
-      onComplete: () => {
-        setIntroFinished(true);
-      },
-    });
-    timelineRef.current = master;
-
-    // SCENE 2: FOOTBALL GOAL (Duration: ~3.2s)
-    const fbAnim = { progress: 0 };
-    master.call(() => {
-      setCurrentScene('football');
-      setSceneProgress(0);
-    });
-
-    master.to(fbAnim, {
-      progress: 1,
-      duration: 3.2,
-      ease: 'none',
-      onUpdate: () => setSceneProgress(fbAnim.progress),
-    });
-    // Synchronize football kick at ~1.6s and goal net strike at ~2.7s
-    master.add(() => sportsAudio.playFootballKick(), '-=1.6');
-    master.add(() => sportsAudio.playGoalNetHit(), '-=0.5');
-
-    // SCENE 3: CRICKET BAT HIT (Duration: ~3.0s)
-    const cbAnim = { progress: 0 };
-    master.call(() => {
-      setCurrentScene('cricket');
-      setSceneProgress(0);
-    });
-
-    master.to(cbAnim, {
-      progress: 1,
-      duration: 3.0,
-      ease: 'none',
-      onUpdate: () => setSceneProgress(cbAnim.progress),
-    });
-    // Synchronize cricket bat impact at ~1.5s
-    master.add(() => sportsAudio.playCricketBatHit(), '-=1.5');
-
-    // SCENE 4: BADMINTON OVERHEAD SMASH (Duration: ~3.0s)
-    const bdAnim = { progress: 0 };
-    master.call(() => {
-      setCurrentScene('badminton');
-      setSceneProgress(0);
-    });
-
-    master.to(bdAnim, {
-      progress: 1,
-      duration: 3.0,
-      ease: 'none',
-      onUpdate: () => setSceneProgress(bdAnim.progress),
-    });
-    // Synchronize overhead smash at ~1.4s
-    master.add(() => sportsAudio.playBadmintonSmash(), '-=1.6');
-
-    // SCENE 5: BASKETBALL SHOT & SWISH (Duration: ~3.2s)
-    const bbAnim = { progress: 0 };
-    master.call(() => {
-      setCurrentScene('basketball');
-      setSceneProgress(0);
-    });
-
-    master.to(bbAnim, {
-      progress: 1,
-      duration: 3.2,
-      ease: 'none',
-      onUpdate: () => setSceneProgress(bbAnim.progress),
-    });
-    // Synchronize basketball swish through hoop at ~2.5s
-    master.add(() => sportsAudio.playBasketballSwish(), '-=0.7');
-
-    // SCENE 6: BLUE-PURPLE FIRE TRANSITION & LOGO REVEAL (Duration: ~3.6s)
-    const fireAnim = { progress: 0 };
-    master.call(() => {
-      setCurrentScene('fire-transition');
-      setSceneProgress(0);
-      sportsAudio.playFireVortexSweep();
-    });
-
-    master.to(fireAnim, {
-      progress: 1,
-      duration: 2.2,
-      ease: 'power2.out',
-      onUpdate: () => setSceneProgress(fireAnim.progress),
-    });
-
-    // Reveal Official Logo & Sub-bass Impact
-    master.call(() => {
-      setLogoRevealed(true);
-      sportsAudio.playLogoRevealImpact();
-    });
-
-    master.to({}, { duration: 1.4 });
-  }, []);
-
-  // Replay from Scene 1
-  const handleReplay = useCallback(() => {
-    if (timelineRef.current) {
-      timelineRef.current.kill();
-    }
+  // Transition from TAP TO ENTER to full-screen intro video
+  const handleStartIntro = useCallback(() => {
     sportsAudio.stopAllAudio();
-    setIsEnteringArena(false);
-    setLogoRevealed(false);
-    setIntroFinished(false);
-    setSceneProgress(0);
-    setCurrentScene('tap');
+    setCurrentScene('video');
   }, []);
+
+  // Handle Video playback lifecycle when entering 'video' scene
+  useEffect(() => {
+    if (currentScene !== 'video') {
+      hasStartedRef.current = false;
+      return;
+    }
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = 0;
+    video.muted = isMuted;
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn('[Intro Video] autoplay unmuted restricted, trying muted:', err);
+        if (video) {
+          video.muted = true;
+          video.play().catch((playErr) => {
+            console.warn('[Intro Video] playback failed, will wait for user or timeout:', playErr);
+          });
+        }
+      });
+    }
+
+    // Failsafe timeout: video is 10s; if stalled beyond 13s, transition to homepage
+    fallbackTimerRef.current = setTimeout(() => {
+      handleEnterArena();
+    }, 13000);
+
+    return () => {
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+      }
+    };
+  }, [currentScene, isMuted, handleEnterArena]);
+
+  // Video error fallback
+  const handleVideoError = useCallback(
+    (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+      const video = e.currentTarget;
+      console.error('[Intro Video Error]', video.error);
+      setVideoError(true);
+      // Graceful fallback to arena homepage
+      setTimeout(() => {
+        handleEnterArena();
+      }, 1000);
+    },
+    [handleEnterArena]
+  );
 
   return (
     <div className={`sports-intro-wrapper ${isEnteringArena ? 'entering-warp' : ''}`}>
-      {/* SCENE 1: Tap to Enter Overlay */}
+      {/* 1. Initial TAP TO ENTER Screen */}
       {currentScene === 'tap' && (
         <TapToEnter
-          onEnter={startCinematicExperience}
+          onEnter={handleStartIntro}
           onSkip={handleSkip}
           isMuted={isMuted}
           onToggleMute={handleToggleMute}
         />
       )}
 
-      {/* Real Cinematic Sports Video Scenes (Football, Cricket, Badminton, Basketball) */}
-      {(currentScene === 'football' ||
-        currentScene === 'cricket' ||
-        currentScene === 'badminton' ||
-        currentScene === 'basketball') && (
-        <CinematicVideoScene
-          currentScene={currentScene}
-          sceneProgress={sceneProgress}
-          reducedMotion={reducedMotion}
-        />
+      {/* 2. Full-Screen Cinematic Gemini Intro Video */}
+      {currentScene === 'video' && (
+        <div ref={containerRef} className="intro-video-container">
+          {!videoError ? (
+            <>
+              <video
+                ref={videoRef}
+                className="intro-fullscreen-video"
+                src="/videos/ignite-intro.mp4"
+                playsInline
+                autoPlay
+                muted={isMuted}
+                loop={false}
+                controls={false}
+                preload="auto"
+                onLoadedMetadata={updateWatermarkLayout}
+                onEnded={handleEnterArena}
+                onError={handleVideoError}
+              />
+
+              {/* Watermark Replacement: Original IGNITE Dragon Emblem */}
+              {watermarkPos.visible && (
+                <div
+                  className="intro-watermark-overlay"
+                  style={{
+                    right: `${watermarkPos.right}px`,
+                    bottom: `${watermarkPos.bottom}px`,
+                    width: `${watermarkPos.size}px`,
+                    height: `${watermarkPos.size}px`,
+                  }}
+                  aria-hidden="true"
+                >
+                  <img
+                    src="/ignite-dragon-emblem.png"
+                    alt=""
+                    className="intro-watermark-logo"
+                    draggable={false}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="intro-video-fallback">
+              <span className="fallback-text">ENTERING IGNITE SPORTS CLUB...</span>
+            </div>
+          )}
+
+          {/* Top HUD Controls during video playback (Sound Toggle & Skip) */}
+          <IntroControls
+            isMuted={isMuted}
+            onToggleMute={handleToggleMute}
+            onSkipIntro={handleSkip}
+            onReplayIntro={() => {
+              if (videoRef.current) {
+                videoRef.current.currentTime = 0;
+                videoRef.current.play();
+              }
+            }}
+            showReplay={false}
+          />
+        </div>
       )}
 
-      {/* Top HUD Controls (Always accessible after entry) */}
-      {currentScene !== 'tap' && (
-        <IntroControls
-          isMuted={isMuted}
-          onToggleMute={handleToggleMute}
-          onSkipIntro={handleSkip}
-          onReplayIntro={handleReplay}
-          showReplay={introFinished}
-        />
-      )}
-
-      {/* SCENE 6: Cosmic Blue-Purple Fire Transition & Official Logo Reveal */}
-      <FireTransitionOverlay
-        active={currentScene === 'fire-transition' || currentScene === 'crest'}
-        progress={sceneProgress}
-        logoRevealed={logoRevealed}
-        onEnterArena={handleEnterArena}
-        onSkipIntro={handleSkip}
-      />
-
-      {/* Cinematic Warp Speedlines Flash upon Entering Arena */}
+      {/* Cinematic Warp Speedlines Flash upon Entering Website */}
       {isEnteringArena && <div className="arena-warp-flash" aria-hidden="true" />}
     </div>
   );
 };
+
